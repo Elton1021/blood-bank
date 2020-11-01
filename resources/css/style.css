@@ -1,0 +1,33 @@
+*{
+    padding:0;
+    margin: 0;
+}
+
+body, html{
+    height: 100vh;
+    width: 100%;
+    position: relative;
+}
+
+.custom-bg-dark{
+    background-color: #252a2f!important;
+}
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+}
+
+.custom-m-5{
+    margin: 5px 0;
+}
+
+@media screen and (max-width: 767px) {
+    .footer{
+        position: relative;
+    }
+}

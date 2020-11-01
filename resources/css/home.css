@@ -1,0 +1,20 @@
+.home-v-center{
+    margin-top: 15%;
+}
+
+.home-margin{
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+@media screen and (max-width: 767px) {
+    .home-v-center{
+        margin-top: 0%;
+    }
+    
+    .home-margin{
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+}
