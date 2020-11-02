@@ -8,6 +8,16 @@ class ReceiverDetailsController extends BaseController {
         $this->tablename = 'receiver_details';
     }
 
+    public function userExists($username){
+        try{
+            $data = $this->getData([ 'fields' => ['COUNT(id) as count'] ,'where' => [
+                ['LOWER(username)' => $username]
+            ]]);
+            return json_encode(['status' => 200, 'data' => ($data['count'] > 0)]);
+        } catch(Exception $e) {}
+        return json_encode(['status' => 500, 'data' => false ]);
+    }
+
     public function login() {
         try{
             $username = $_POST['username'];

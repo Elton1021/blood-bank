@@ -1,15 +1,13 @@
 <?php
 class BaseController {
 
-    protected $mysqli ;
-    protected $connected = false;
+    protected $connection ;
+    protected $tableName;
 
     public function __construct(){
-        $this->mysqli = new mysqli("localhost","root","","blood_bank");
-        if ($this->mysqli->connect_errno) {
-            die("Failed to connect to MySQL: " . $this->mysqli->connect_error);
-        } else {
-            $this->connected = true;
+        $this->connection = new mysqli("localhost","root","","blood_bank");
+        if ($this->connection->connect_errno) {
+            die("Failed to connect to MySQL: " . $this->connection->connect_error);
         }
     }
 
@@ -25,13 +23,14 @@ class BaseController {
             $values []= $this->checkQuotes($value);
         }
         try {
-            var_dump('INSERT INTO '.$this->tablename.' ('.implode(',',$columnNames).') values ("'.implode('","',$values).'")');
-            return $this->mysqli->query('INSERT INTO '.$this->tablename.' ('.implode(',',$columnNames).') values ("'.implode('","',$values).'")');
+            $sql = 'INSERT INTO '.$this->tableName.' ('.implode(',',$columnNames).') values ("'.implode('","',$values).'")';
+            if($this->connection->query($sql)){
+                return $this->connection->insert_id;
+            }
         } catch (Exception $e) {
             //Log
             var_dump(e);
         }
-        return false;
     }
 
     public function getData($clauses = []){
@@ -42,8 +41,8 @@ class BaseController {
                     $whereClause []= $field.' = "'.$this->checkQuotes($value).'"';
                 }
             }
-            $sql = "SELECT ".implode(",",$clauses['fields'] ?? ['*'])." FROM ".$this->tablename.(sizeof($whereClause) > 0 ? ' WHERE '.implode(' AND ',$whereClause) : '');
-            $result = $this->mysqli->query($sql);
+            $sql = "SELECT ".implode(",",$clauses['fields'] ?? ['*'])." FROM ".$this->tableName.(sizeof($whereClause) > 0 ? ' WHERE '.implode(' AND ',$whereClause) : '');
+            $result = $this->connection->query($sql);
             return $result->fetch_assoc() ?? [];
         } catch (Exception $e) {
             //Log
@@ -54,7 +53,7 @@ class BaseController {
 
     function sql($query){
         try {
-            $result = $this->mysqli->query($query);
+            $result = $this->connection->query($query);
             return $result->fetch_assoc() ?? [];
         } catch (Exception $e) {
             //Log

@@ -7,10 +7,8 @@ class Route {
     private $routes = [
         'home' => '/view/home.php',
         'auth' => '/view/auth.php',
-        'login_receiver' => '/view/process/login_receiver.php',
-        'register_receiver' => '/view/process/register_receiver.php',
-        'login_hospital' => '/view/process/login_hospital.php',
-        'register_hospital' => '/view/process/register_hospital.php',
+        'login' => '/view/process/login.php',
+        'register' => '/view/process/register.php',
     ];
 
     private $key;

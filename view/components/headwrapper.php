@@ -1,4 +1,9 @@
-<?php require_once('../utils/Route.php');?>
+<?php
+    $backtrack = "../";
+    require_once($backtrack.'utils/Route.php');
+    require_once($backtrack.'controllers/AuthenticateController.php');
+    $auth = new AuthenticateController;
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

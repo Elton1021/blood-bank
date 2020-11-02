@@ -4,7 +4,7 @@
     $formType = $_GET['f'] ?? '';
     $formDetails = [];
 
-    if($type != 'hospital' && $type != 'receiver'){
+    if($type != 'hospital' && $type != 'receiver' || isset($auth->user()['id'])){
         ?><script>console.log('here')</script><?php
         (new Route('home'))->redirect();
     } else if ( $formType == 'register' && $type == 'hospital'){
@@ -97,7 +97,7 @@
             </span>
         </div>
         <div class="card-body">
-            <form action="<?php echo (new Route($formType.'_'.$type))->get();?>" method="post" autocomplete="off">
+            <form action="<?php echo (new Route($formType))->get();?>" method="post" autocomplete="off">
                 <div class="row">
                 <?php
                     foreach($formDetails as $formDetail){
@@ -155,26 +155,42 @@
     </div>
 </div>
 
-<script src="../resources/js/validator.js"></script>
-<script>
-    setRules({
-        name: {
-            regex: /[^A-Za-z0-9\ ]/,
-        },
-        username: {
-            regex: /[^A-Za-z0-9]/,
-        },
-        password: {
-            regex: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/,
-            matchRegex: false,
-            minLength: 8
-        },
-        confirm_password: {
-            matchIdValue: 'password',
-            minLength: 8
-        },
-    })
-</script>
+<?php 
+    if($formType == 'register'){
+    ?>
+        <script src="../resources/js/validator.js"></script>
+        <script>
+            setRules({
+                name: {
+                    regex: /[^A-Za-z0-9\ ]/,
+                },
+                username: {
+                    regex: /[^A-Za-z0-9]/,
+                    ajax: {
+                        url:"<?php echo (new Route($formType))->get();?>",
+                        type:"POST",
+                        headers: {'X-Requested-With': 'XMLHttpRequest'},
+                        data: {
+                            userExists: true
+                        },
+                        success: (response) => JSON.parse(response).data,
+                        dataName: 'username'
+                    }
+                },
+                password: {
+                    regex: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/,
+                    matchRegex: false,
+                    minLength: 8
+                },
+                confirm_password: {
+                    matchIdValue: 'password',
+                    minLength: 8
+                },
+            })
+        </script>
+    <?php
+    }
+?>
 
 <?php
     require_once('components/footwrapper.php');

@@ -4,6 +4,34 @@ function setRules(rules){
     const INPUT_ERROR_LOG = {}
     let errCount = 0
 
+    //mark invalid inputs and logs the error on client side
+    function markInvalid (id){
+        $('#'+id).removeClass('is-valid')
+        $('#'+id).addClass('is-invalid')
+        $('#'+id).siblings('small:not(".valid-feedback")').addClass('invalid-feedback')
+        if(typeof(INPUT_ERROR_LOG[id]) === "undefined" || !INPUT_ERROR_LOG[id]){
+            errCount++
+        }
+        INPUT_ERROR_LOG[id] = true;
+    }
+
+    function markValid(id){
+        if(INPUT_ERROR_LOG[id]){
+            INPUT_ERROR_LOG[id] = false;
+            errCount--
+        }
+        if($('#'+id).val().trim().length > 0){
+            //if valid then it's marked valid and logs the error on client side
+            $('#'+id).removeClass('is-invalid')
+            $('#'+id).addClass('is-valid')
+        }  else {
+            //in case the field is not required and first attempt didn't meet the rule everything is marked normal
+            $('#'+id).siblings('small:not(".valid-feedback")').removeClass('invalid-feedback')
+            $('#'+id).removeClass('is-invalid')
+            $('#'+id).removeClass('is-valid')
+        }
+    }
+
     function validation (id) {
         const value = $('#'+id).val().trim();
         //checks if the rules are met
@@ -14,45 +42,40 @@ function setRules(rules){
             typeof(rules[id].matchIdValue) !== "undefined" && $('#'+rules[id].matchIdValue).val() !== value ||
             $('#'+id).prop('required') && value.length === 0
         )){
-            //if rules are not marks invalid and logs the error on client side
-            $('#'+id).removeClass('is-valid')
-            $('#'+id).addClass('is-invalid')
-            $('#'+id).siblings('small:not(".valid-feedback")').addClass('invalid-feedback')
-            if(typeof(INPUT_ERROR_LOG[id]) === "undefined" || !INPUT_ERROR_LOG[id]){
-                errCount++
-            }
-            INPUT_ERROR_LOG[id] = true;
+            markInvalid(id)
         } else {
-            if(INPUT_ERROR_LOG[id]){
-                INPUT_ERROR_LOG[id] = false;
-                errCount--
-            }
-            if(value.length > 0){
-                //if valid then it's marked invalid and logs the error on client side
-                $('#'+id).removeClass('is-invalid')
-                $('#'+id).addClass('is-valid')
-            }  else {
-                //in case the field is not required and first attempt didn't meet the rule everything is marked normal
-                $('#'+id).siblings('small:not(".valid-feedback")').removeClass('invalid-feedback')
-                $('#'+id).removeClass('is-invalid')
-                $('#'+id).removeClass('is-valid')
-            }
+            markValid(id)
         }
-        console.log(INPUT_ERROR_LOG,errCount);
     }
 
     //loops through rules creating event listeners for each rules using jQuery
     Object.keys(rules).forEach(id => {
         $('#'+id).on('keyup',e => validation(id))
+        $('#'+id).on('blur',e => {
+            if(typeof(rules[id].ajax) !== "undefined"){
+                data = typeof(rules[id].ajax.data) != "undefined" ? {...rules[id].ajax.data} : {}
+                data[rules[id].ajax.dataName] = $('#'+id).val().trim();
+                $.ajax({
+                    ...rules[id].ajax,
+                    data,
+                    success: (res) => {
+                        if(rules[id].ajax.success(res)){
+                            markInvalid(id)
+                        } else {
+                            markValid(id)
+                        }
+                    }
+                })
+            }               
+        })
     })
 
     //form validation on submit (precaution)
     $('form').on('submit', e => {
         e.preventDefault()
         $('input[required], textarea[required], select[required]').each((_, item) => {
-            validation($(item).prop('id'))
+            validation($(item).prop('id'),true)
         })
-        console.log(errCount);
         if(errCount == 0){
             $('form').submit()
         }
