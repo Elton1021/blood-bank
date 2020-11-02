@@ -25,7 +25,7 @@
             'icon' => 'invert_colors',
             'iconColor' => '#da2323',
             'buttons' => [[
-                'url' => '#',
+                'url' => (new Route('blood_samples'))->get(),
                 'classes' => 'btn',
                 'text' => 'Check Availability'
             ]]

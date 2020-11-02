@@ -1,4 +1,5 @@
 <?php
+session_start();
 $backtrack = $backtrack ?? "../../";
 require_once($backtrack."controllers/BaseController.php");
 require_once($backtrack."utils/Route.php");
@@ -72,12 +73,28 @@ class AuthenticateController extends BaseController{
             $password = md5($_POST['password']);
             $data = $this->getData(['where' => [
                 ['username' => $username],
-                ['password' => $password],
+                ['password' => $password]
             ]]);
-            $this->setcookie($data);
+            if(sizeof($data) > 0){
+                $this->setcookie($data);
+                (new Route('home'))->redirect();
+            }
+            $data = $this->getData(['where' => [
+                ['username' => $username]
+            ]]);
+            if(sizeof($data) > 0){
+                $_SESSION['incorrect_password'] = true;
+                $_SESSION['username'] = $username;
+            } else {
+                $_SESSION['incorrect_username'] = true;
+            }
         } catch(Exception $e) {
             //Log
         }
+        if(isset($this->userType)){
+            (new Route('auth',['t'=> $this->userType,'f' => 'login']))->redirect();
+        }
+        (new Route('home'))->redirect();
     }
 
     public function register() {
@@ -92,12 +109,15 @@ class AuthenticateController extends BaseController{
             if(!empty($data)){
                 $data['id'] = $this->insert($data);
                 $this->setcookie($data);
-                // (new Route('home'))->redirect();
+                (new Route('home'))->redirect();
             }
         } catch (Exception $e) {
             //Log
         }
-        // (new Route('auth',['t'=> 'hospital','f' => 'register']))->redirect();
+        if(isset($this->userType)){
+            (new Route('auth',['t'=> $this->userType,'f' => 'login']))->redirect();
+        }
+        (new Route('home'))->redirect();
     }
 
     public function user(){
@@ -124,5 +144,6 @@ class AuthenticateController extends BaseController{
         $this->username = null;
         $this->userType = null;
         $this->blood_group = null;
+        (new Route('home'))->redirect();
     }
 }

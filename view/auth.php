@@ -1,88 +1,70 @@
 <?php
+    session_start();
     require_once('components/headwrapper.php');
     $type = $_GET['t'] ?? '';
     $formType = $_GET['f'] ?? '';
-    $formDetails = [];
+    $formDetails = [
+        [
+            'title' => 'Hosiptal Name',
+            'id' => 'name',
+            'col-md' => '6',
+            'hint' => 'Special characters not allowed'
+        ],[
+            'title' => 'Username',
+            'id' => 'username',
+            'col-md' => '6',
+            'hint' => 'Only alphanumeric characters are allowed'
+        ],[
+            'title' => 'Password',
+            'id' => 'password',
+            'col-md' => '6',
+            'type' => 'password',
+            'hint' => 'Must have at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 numeric character'
+        ],[
+            'title' => 'Confirm Password',
+            'id' => 'confirm_password',
+            'col-md' => '6',
+            'type' => 'password',
+            'hint' => 'Repeat password'
+        ]
+    ];
 
     if($type != 'hospital' && $type != 'receiver' || isset($auth->user()['id'])){
         ?><script>console.log('here')</script><?php
         (new Route('home'))->redirect();
-    } else if ( $formType == 'register' && $type == 'hospital'){
-        $formDetails = [
-            [
-                'title' => 'Hosiptal Name',
-                'id' => 'name',
-                'col-md' => '6',
-                'hint' => 'Special characters not allowed'
-            ],[
-                'title' => 'Username',
-                'id' => 'username',
-                'col-md' => '6',
-                'hint' => 'Only alphanumeric characters are allowed'
-            ],[
-                'title' => 'Password',
-                'id' => 'password',
-                'col-md' => '6',
-                'type' => 'password',
-                'hint' => 'Must have at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 numeric character'
-            ],[
-                'title' => 'Confirm Password',
-                'id' => 'confirm_password',
-                'col-md' => '6',
-                'type' => 'password',
-                'hint' => 'Repeat password'
-            ]
-        ];
     } else if ( $formType == 'register' && $type == 'receiver') {
-        $formDetails = [
-            [
-                'title' => 'Your Name',
-                'id' => 'name',
-                'col-md' => '6',
-                'hint' => 'Special characters not allowed'
-            ],[
-                'title' => 'Username',
-                'id' => 'username',
-                'col-md' => '6',
-                'hint' => 'Only alphanumeric characters are allowed'
-            ],[
-                'title' => 'Password',
-                'id' => 'password',
-                'col-md' => '4',
-                'type' => 'password',
-                'hint' => 'Must have at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 numeric character'
-            ],[
-                'title' => 'Confirm Password',
-                'id' => 'confirm_password',
-                'col-md' => '4',
-                'type' => 'password',
-                'hint' => 'Repeat password'
-            ],[
-                'title' => 'Blood Group',
-                'id' => 'blood_group',
-                'col-md' => '4',
-                'type' => 'select',
-                'options' => [
-                    'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'
-                ],
-                'hint' => 'Select your blood group'
-            ]
+        $formDetails[0]['title'] = 'Your Name';
+        $formDetails[2]['col-md'] = '4';
+        $formDetails[3]['col-md'] = '4';
+        $formDetails[4] = [
+            'title' => 'Blood Group',
+            'id' => 'blood_group',
+            'col-md' => '4',
+            'type' => 'select',
+            'options' => [
+                'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'
+            ],
+            'hint' => 'Select your blood group'
         ];
-    } else {
+    } else if($formType == 'login') {
         $formDetails = [
             [
                 'title' => 'Username',
                 'id' => 'username',
                 'col-md' => '6',
-                'hint' => 'Only alphanumeric characters are allowed'
+                'value' => $_SESSION['username'],
+                'hint' => isset($_SESSION['incorrect_username']) && boolval($_SESSION['incorrect_username']) ? 'Invalid username' : null,
+                'is-invalid' => isset($_SESSION['incorrect_username']) && boolval($_SESSION['incorrect_username'])
             ],[
                 'title' => 'Password',
                 'id' => 'password',
                 'col-md' => '6',
                 'type' => 'password',
-                'hint' => 'Must have at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 numeric character'
+                'hint' => isset($_SESSION['incorrect_password']) && boolval($_SESSION['incorrect_password']) ? 'Invalid password' : null,
+                'is-invalid' => isset($_SESSION['incorrect_password']) && boolval($_SESSION['incorrect_password'])
             ]
         ];
+        session_destroy();
     }
 ?>
 
@@ -120,11 +102,11 @@
                                     <?php
                                 } else {
                                     ?>
-                                        <input type="<?php echo $formDetail['type'] ?? 'text' ?>" id="<?php echo $formDetail['id']?>" class="form-control" name="<?php echo $formDetail['id']?>" required>
+                                        <input type="<?php echo $formDetail['type'] ?? 'text' ?>" id="<?php echo $formDetail['id']?>" class="form-control <?php echo isset($formDetail['is-invalid']) && $formDetail['is-invalid'] ? 'is-invalid' : '' ?>" <?php echo isset($formDetail['value']) ? 'value="'.$formDetail['value'].'"': ''?> name="<?php echo $formDetail['id']?>" required>
                                     <?php
                                 }
                             ?>
-                            <small><?php echo $formDetail['hint'] ?></small>
+                            <?php echo isset($formDetail['hint']) ? "<small ".(isset($formDetail['is-invalid']) && $formDetail['is-invalid'] ? 'class="invalid-feedback"' : '').">".$formDetail['hint']."</small>" : '<small></small>'?>
                         </div>
                     </div>
                 <?php
