@@ -72,12 +72,11 @@ function setRules(rules){
 
     //form validation on submit (precaution)
     $('form').on('submit', e => {
-        e.preventDefault()
         $('input[required], textarea[required], select[required]').each((_, item) => {
             validation($(item).prop('id'),true)
         })
-        if(errCount == 0){
-            $('form').submit()
+        if(errCount > 0){
+            e.preventDefault()
         }
     })
 }

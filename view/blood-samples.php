@@ -1,7 +1,7 @@
 <?php
     $bloodSamplesNav = 'active';
     require_once('components/headwrapper.php');
-    // require_once('components/headwrapper.php');
+    require_once('components/table.php');
 ?>
 <div class="container mt-5 mb-5 contentHeight">
     <div class="card bg-dark text-light shadow">

@@ -11,7 +11,11 @@ class MysqliUtil {
         $this->connectionError = $this->connection->connect_errno;
     }
 
-    public function checkQuotes($value){
+    public function __destruct(){
+        $this->connection->close();
+    }
+
+    public function escapeQuotes($value){
         return str_replace('"','\"',str_replace('\'','\\\'',$value));
     }
 
@@ -20,44 +24,47 @@ class MysqliUtil {
         $values = [];
         foreach($data as $column => $value){
             $columnNames []= $column;
-            $values []= $this->checkQuotes($value);
+            $values []= $this->escapeQuotes($value);
         }
-        try {
-            $sql = 'INSERT INTO '.$this->tableName.' ('.implode(',',$columnNames).') values ("'.implode('","',$values).'")';
-            if($this->connection->query($sql)){
-                return $this->connection->insert_id;
-            }
-        } catch (Exception $e) {
-            //Log
-            var_dump(e);
+        $sql = 'INSERT INTO '.$this->tableName.' ('.implode(',',$columnNames).') values ("'.implode('","',$values).'")';
+        $result = $this->connection->query($sql);
+        if($result){
+            return $this->connection->insert_id;
         }
     }
 
+    public function update($data,$where){
+        $set = [];
+        $whereClause = [];
+        foreach($data as $column => $value){
+            $set []= $column.' = "'.$this->escapeQuotes($value).'"';
+        }
+        foreach($where as $column => $value){
+            $whereClause []= $column.' = "'.$this->escapeQuotes($value).'"';
+        }
+        $sql = 'UPDATE '.$this->tableName.' SET '.implode(',',$set).' '.( sizeof($whereClause) > 0 ? 'WHERE '.implode(' AND ',$whereClause) : '');
+        return $this->connection->query($sql);
+    }
+
     public function getData($clauses = []){
-        try {
-            $whereClause = [];
-            foreach(($clauses['where'] ?? []) as $where) {
-                foreach($where as $field => $value){
-                    $whereClause []= $field.' = "'.$this->checkQuotes($value).'"';
-                }
+        $whereClause = [];
+        foreach(($clauses['where'] ?? []) as $where) {
+            foreach($where as $field => $value){
+                $whereClause []= $field.' = "'.$this->escapeQuotes($value).'"';
             }
-            $sql = "SELECT ".implode(",",$clauses['fields'] ?? ['*'])." FROM ".$this->tableName.(sizeof($whereClause) > 0 ? ' WHERE '.implode(' AND ',$whereClause) : '');
-            $result = $this->connection->query($sql);
-            return $result->fetch_assoc() ?? [];
-        } catch (Exception $e) {
-            //Log
-            var_dump(e);
+        }
+        $sql = "SELECT ".implode(",",$clauses['fields'] ?? ['*'])." FROM ".$this->tableName.(sizeof($whereClause) > 0 ? ' WHERE '.implode(' AND ',$whereClause) : '');
+        $result = $this->connection->query($sql);
+        if($result->num_rows > 0){
+            return $result->fetch_assoc();
         }
         return [];
     }
 
-    function sql($query){
-        try {
-            $result = $this->connection->query($query);
-            return $result->fetch_assoc() ?? [];
-        } catch (Exception $e) {
-            //Log
-            var_dump(e);
+    function getByQuery($query){
+        $result = $this->connection->query($query);
+        if($result->num_rows > 0){
+            return $result->fetch_assoc();
         }
         return [];
     }

@@ -14,7 +14,7 @@
       <?php if(isset($auth->user()['id']) && isset($auth->user()['userType']) && $auth->user()['userType'] == "hospital") {
         ?>
         <li class="nav-item">
-          <a class="nav-link" href="#">Add Blood Samples</a>
+          <a class="nav-link <?php echo $addSamplesNav ?? ''?>" href="<?php echo (new Route('addSamples'))->get()?>">Add Blood Samples</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">View Requests</a>

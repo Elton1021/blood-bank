@@ -30,6 +30,10 @@ class AuthenticateController extends MysqliUtil{
         }
     }
 
+    public function __destruct(){
+        MysqliUtil::__destruct();
+    }
+
     public function setTableAndUserType(){
         parse_str(parse_url($_SERVER['HTTP_REFERER'], PHP_URL_QUERY), $queries);
         if( $queries['t'] == 'hospital' || $queries['t'] == 'receiver'){
@@ -114,9 +118,13 @@ class AuthenticateController extends MysqliUtil{
             }
             if(!empty($data)){
                 $data['id'] = $this->insert($data);
+                if(!isset($data['id'])){
+                    throw new Exception('user not registered');
+                }
                 $this->setcookie($data);
                 (new Route('home'))->redirect();
             }
+            throw new Exception('data is inappropriate');
         } catch(Throwable | Error | Exception $e) {
             $this->log->error($e);
         }

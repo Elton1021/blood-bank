@@ -49,7 +49,7 @@
         ]
     ];
 ?>
-<link rel="stylesheet" href="../resources/css/home.css">
+<link rel="stylesheet" href="../resources/css/optional.css">
 
 <div class="container mt-5 mb-5">
     <div class="row home-v-center">
@@ -66,7 +66,7 @@
                             <h5 class="card-title"><?php echo $card['title']?><h5>
                             <?php 
                                 foreach($card['buttons'] as $button){
-                                    echo "<a href='".$button['url']."' class='".$button['classes']."'>".$button['text']."</a>";
+                                    echo "<a href='".$button['url']."' class='".$button['classes']." text-primary'>".$button['text']."</a>";
                                 }
                             ?>
                         </div>

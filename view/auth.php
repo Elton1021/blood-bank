@@ -68,6 +68,12 @@
         ];
         session_destroy();
     }
+
+    if($formType == 'register'){
+        ?>
+            <link rel="stylesheet" href="../resources/css/optional.css">
+        <?php
+    }
 ?>
 
 <div class="container mt-5 mb-5">
