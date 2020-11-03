@@ -1,5 +1,7 @@
 <?php
-    session_start();
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
     require_once('components/headwrapper.php');
     $type = $_GET['t'] ?? '';
     $formType = $_GET['f'] ?? '';
@@ -155,7 +157,7 @@
                         data: {
                             userExists: true
                         },
-                        success: (response) => JSON.parse(response).data,
+                        success: (response) => JSON.parse(response).status == 200 && JSON.parse(response).data,
                         dataName: 'username'
                     }
                 },

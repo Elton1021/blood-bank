@@ -1,8 +1,11 @@
 <?php
-session_start();
-$backtrack = $backtrack ?? "../../";
-require_once($backtrack."utils/MysqliUtil.php");
-require_once($backtrack."utils/Route.php");
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+$BACKTRACK = $BACKTRACK ?? "../../";
+require_once($BACKTRACK."utils/MysqliUtil.php");
+require_once($BACKTRACK."utils/Log.php");
+require_once($BACKTRACK."utils/Route.php");
 
 class AuthenticateController extends MysqliUtil{
 
@@ -14,6 +17,7 @@ class AuthenticateController extends MysqliUtil{
 
     public function __construct(){
         MysqliUtil::__construct();
+        $this->log = new Log;
         if(isset($_COOKIE) && isset($_COOKIE['a_name']) && isset($_COOKIE['a_username']) && isset($_COOKIE['a_id']) && isset($_COOKIE['a_userType']) && ($_COOKIE['a_userType'] == "receiver" && $_COOKIE['a_blood_group'] || $_COOKIE['a_userType'] == "hospital")) {
             $this->id = $_COOKIE['a_id'];
             $this->name = $_COOKIE['a_name'];
@@ -43,7 +47,9 @@ class AuthenticateController extends MysqliUtil{
                 ['LOWER(username)' => $username]
             ]]);
             return json_encode(['status' => 200, 'data' => ($data['count'] > 0)]);
-        } catch(Exception $e) {}
+        } catch(Throwable | Error | Exception $e) {
+            $this->log->error($e);
+        }
         return json_encode(['status' => 500, 'data' => false ]);
     }
 
@@ -88,8 +94,8 @@ class AuthenticateController extends MysqliUtil{
             } else {
                 $_SESSION['incorrect_username'] = true;
             }
-        } catch(Exception $e) {
-            //Log
+        } catch(Throwable | Error | Exception $e) {
+            $this->log->error($e);
         }
         if(isset($this->userType)){
             (new Route('auth',['t'=> $this->userType,'f' => 'login']))->redirect();
@@ -111,8 +117,8 @@ class AuthenticateController extends MysqliUtil{
                 $this->setcookie($data);
                 (new Route('home'))->redirect();
             }
-        } catch (Exception $e) {
-            //Log
+        } catch(Throwable | Error | Exception $e) {
+            $this->log->error($e);
         }
         if(isset($this->userType)){
             (new Route('auth',['t'=> $this->userType,'f' => 'login']))->redirect();
