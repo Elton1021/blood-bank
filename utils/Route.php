@@ -7,7 +7,7 @@ class Route {
     private $routes = [
         'home' => '/view/home.php',
         'auth' => '/view/auth.php',
-        'blood_samples' => '/view/blood_samples.php',
+        'bloodSamples' => '/view/blood-samples.php',
         'logout' => '/view/process/logout.php',
         'login' => '/view/process/login.php',
         'register' => '/view/process/register.php',

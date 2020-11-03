@@ -1,4 +1,0 @@
-controllers/HospitalDetailsController.php
-controllers/ReceiverDetailsController.php
-test.php
-test2.php

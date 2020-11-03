@@ -1,7 +1,8 @@
-<link rel="stylesheet" href="../resources/css/home.css">
-
 <?php
     require_once('components/headwrapper.php');
+    if(isset($auth->user()['id'])){
+        (new Route('bloodSamples'))->redirect();
+    }
     $cards = [
         [
             'col' => 'col-md-4 col-ls-4 col-xs-12 custom-m-5',
@@ -25,7 +26,7 @@
             'icon' => 'invert_colors',
             'iconColor' => '#da2323',
             'buttons' => [[
-                'url' => (new Route('blood_samples'))->get(),
+                'url' => (new Route('bloodSamples'))->get(),
                 'classes' => 'btn',
                 'text' => 'Check Availability'
             ]]
@@ -48,6 +49,7 @@
         ]
     ];
 ?>
+<link rel="stylesheet" href="../resources/css/home.css">
 
 <div class="container mt-5 mb-5">
     <div class="row home-v-center">

@@ -1,14 +1,14 @@
 <?php
-class BaseController {
+class MysqliUtil {
 
-    protected $connection ;
+    protected $connection;
+    public $connectionError;
     protected $tableName;
 
     public function __construct(){
+        error_reporting(E_ERROR | E_PARSE);
         $this->connection = new mysqli("localhost","root","","blood_bank");
-        if ($this->connection->connect_errno) {
-            die("Failed to connect to MySQL: " . $this->connection->connect_error);
-        }
+        $this->connectionError = $this->connection->connect_errno;
     }
 
     public function checkQuotes($value){

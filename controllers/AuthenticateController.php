@@ -1,10 +1,10 @@
 <?php
 session_start();
 $backtrack = $backtrack ?? "../../";
-require_once($backtrack."controllers/BaseController.php");
+require_once($backtrack."utils/MysqliUtil.php");
 require_once($backtrack."utils/Route.php");
 
-class AuthenticateController extends BaseController{
+class AuthenticateController extends MysqliUtil{
 
     private $id;
     private $username;
@@ -13,7 +13,7 @@ class AuthenticateController extends BaseController{
     private $userType;
 
     public function __construct(){
-        BaseController::__construct();
+        MysqliUtil::__construct();
         if(isset($_COOKIE) && isset($_COOKIE['a_name']) && isset($_COOKIE['a_username']) && isset($_COOKIE['a_id']) && isset($_COOKIE['a_userType']) && ($_COOKIE['a_userType'] == "receiver" && $_COOKIE['a_blood_group'] || $_COOKIE['a_userType'] == "hospital")) {
             $this->id = $_COOKIE['a_id'];
             $this->name = $_COOKIE['a_name'];

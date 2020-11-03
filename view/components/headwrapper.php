@@ -17,4 +17,27 @@
 </head>
 <body class="custom-bg-dark">
 <div class="wrapper" style="min-height:100%;height:auto;">
-    <?php require_once('components/navbar.php');?>
+    <?php
+        //incase connection couldn't be established with the db
+        if($auth->connectionError){
+            $disableNav = true;
+            require_once('components/navbar.php');
+            ?>
+            <div class="container mt-5 mb-5">
+                <div class="card bg-dark text-white shadow">
+                    <div class="card-body text-center">
+                        <span class="material-icons" style="font-size:100px!important;">
+                            cloud_off
+                        </span>
+                        <p>Connection couldn't be established with the database. Try again after few minutes.</p>
+                        <button class="btn btn-primary" onclick="location.reload()">Refresh</button>
+                    </div>
+                </div>
+            </div>
+            <?php
+            require_once('components/footwrapper.php');
+            exit();
+        }
+        require_once('components/navbar.php');
+    
+    ?>
