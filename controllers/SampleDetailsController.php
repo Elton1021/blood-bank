@@ -32,7 +32,7 @@ class SampleDetailsController extends MysqliUtil{
             ]]);
             $data = [];
             foreach($res as $r){
-                $data[$res['blood_group']] = $res['status'] == 'A' ? 'checked' : null;
+                $data[$r['blood_group']] = $r['status'] == 'A' ? 'checked' : null;
             }
             return $data;
         } catch(Throwable | Error | Exception $e) {
@@ -46,14 +46,15 @@ class SampleDetailsController extends MysqliUtil{
         try{
             if(isset($_POST['blood_group']) && isset($_POST['status'])){
                 $data = $this->getData([ 'fields' => ['id'] ,'where' => [
-                    ['blood_group' => $_POST['blood_group']]
+                    ['blood_group' => $_POST['blood_group']],
+                    ['hospital_id' => $this->auth->user()['id']],
                 ]]);
                 $res = false;
                 if(sizeof($data) > 0){
                     $res = $this->update([
                         'blood_group' => $_POST['blood_group'],
                         'status' => $_POST['status'],
-                    ],['id' => $data['id']]);
+                    ],['id' => $data[0]['id']]);
                 }else{
                     $res = $this->insert([
                         'blood_group' => $_POST['blood_group'],

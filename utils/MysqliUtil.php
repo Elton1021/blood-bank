@@ -46,6 +46,14 @@ class MysqliUtil {
         return $this->connection->query($sql);
     }
 
+    public function collectData($result){
+        $data = [];
+        while($row = $result->fetch_assoc()){
+            $data []= $row;
+        }
+        return $data;
+    }
+
     public function getData($clauses = []){
         $whereClause = [];
         foreach(($clauses['where'] ?? []) as $where) {
@@ -56,7 +64,7 @@ class MysqliUtil {
         $sql = "SELECT ".implode(",",$clauses['fields'] ?? ['*'])." FROM ".$this->tableName.(sizeof($whereClause) > 0 ? ' WHERE '.implode(' AND ',$whereClause) : '');
         $result = $this->connection->query($sql);
         if($result->num_rows > 0){
-            return $result->fetch_assoc();
+            return $this->collectData($result);
         }
         return [];
     }
@@ -64,7 +72,7 @@ class MysqliUtil {
     function getByQuery($query){
         $result = $this->connection->query($query);
         if($result->num_rows > 0){
-            return $result->fetch_assoc();
+            return $this->collectData($result);
         }
         return [];
     }

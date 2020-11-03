@@ -50,7 +50,7 @@ class AuthenticateController extends MysqliUtil{
             $data = $this->getData([ 'fields' => ['COUNT(id) as count'] ,'where' => [
                 ['LOWER(username)' => $username]
             ]]);
-            return json_encode(['status' => 200, 'data' => ($data['count'] > 0)]);
+            return json_encode(['status' => 200, 'data' => ($data[0]['count'] > 0)]);
         } catch(Throwable | Error | Exception $e) {
             $this->log->error($e);
         }
@@ -86,7 +86,7 @@ class AuthenticateController extends MysqliUtil{
                 ['password' => $password]
             ]]);
             if(sizeof($data) > 0){
-                $this->setcookie($data);
+                $this->setcookie($data[0]);
                 (new Route('home'))->redirect();
             }
             $data = $this->getData(['where' => [
