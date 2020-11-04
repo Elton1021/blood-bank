@@ -1,7 +1,12 @@
 <?php
     $bloodSamplesNav = 'active';
     require_once('components/headwrapper.php');
+    require_once('../controllers/SampleDetailsController.php');
     require_once('components/table.php');
+
+    $sample = new SampleDetailsController();
+
+    $data = $sample->index();
 ?>
 <div class="container mt-5 mb-5 contentHeight">
     <div class="card bg-dark text-light shadow">
@@ -14,7 +19,7 @@
             </span>
         </div>
         <div class="card-body">
-            <!-- ?php echo datatable($columns,$db_data);? -->
+        <?php echo datatable($data[0],$data[1])?>
         </div>
     </div>
 </div>

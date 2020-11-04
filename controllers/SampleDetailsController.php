@@ -25,6 +25,29 @@ class SampleDetailsController extends MysqliUtil{
     }
 
     public function index(){
+        $columns = [];
+        $sql = '';
+        if(isset($this->auth->user()['id']) && isset($this->auth->user()['userType']) == 'hospital'){
+            $sql = "SELECT hd.name AS hospital, sd.blood_group FROM sample_details sd INNER JOIN hospital_details hd WHERE sd.status = 'A'";
+            $columns = ['hospital','blood_group'];
+        }else if(isset($this->auth->user()['id']) && isset($this->auth->user()['userType']) == 'receiver'){
+            //fix it later
+            $sql = "SELECT hd.name AS hospital, sd.blood_group FROM sample_details sd INNER JOIN hospital_details hd WHERE sd.status = 'A'";
+            $columns = ['hospital','blood_group'];
+        }else{
+            $sql = "SELECT '<a class=\"btn btn-primary\" href=\"".(new Route('auth',['t' => 'receiver', 'f' => 'login']))->get()."\">Request</a>' AS activity, hd.name AS hospital, sd.blood_group FROM sample_details sd INNER JOIN hospital_details hd WHERE sd.status = 'A'";
+            $columns = ['activity','hospital','blood_group'];
+        }
+
+        try{
+            return [$columns,$this->getByQuery($sql)];
+        } catch(Throwable | Error | Exception $e) {
+            $this->log->error($e);
+        }
+        return [$columns,[]];
+    }
+
+    public function getByHospital(){
         $this->validateHospital();
         try{
             $res = $this->getData(['where' => [

@@ -6,7 +6,7 @@
     $sample = new SampleDetailsController();
     $sample->validateHospital();
 
-    $data = $sample->index();
+    $data = $sample->getByHospital();
     $bloodGroupSwitches = [
         'a_pos' => 'A+',
         'a_neg' => 'A-',
