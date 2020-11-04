@@ -3,7 +3,6 @@ function setRules(rules){
     //variables to log error and keep count
     const INPUT_ERROR_LOG = {}
     let errCount = 0
-    let ajaxValidationCount = 0
 
     //mark invalid inputs and logs the error on client side
     function markInvalid (id){
