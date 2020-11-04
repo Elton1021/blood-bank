@@ -59,7 +59,7 @@ class SampleDetailsController extends MysqliUtil{
             LEFT JOIN
                 sample_request sr
             ON
-                sd.id = sr.sample_id AND sr.receiver_id = 8
+                sd.id = sr.sample_id AND sr.receiver_id = ".$this->auth->user()['id']."
             WHERE
                 sd.status = 'A'
             ORDER BY sd.updated_on DESC";
