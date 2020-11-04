@@ -10,6 +10,8 @@ class Route {
         'bloodSamples' => '/view/blood-samples.php',
         'addSamples' => '/view/add-samples.php',
         'storeSample' => '/view/process/store-sample.php',
+        'requestBlood' => '/view/process/request-blood.php',
+        'viewRequest' => '/view/view-request.php',
         'logout' => '/view/process/logout.php',
         'login' => '/view/process/login.php',
         'register' => '/view/process/register.php',

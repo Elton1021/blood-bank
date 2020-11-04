@@ -2,7 +2,7 @@
     $viewRequestNav = 'active';
     require_once('components/headwrapper.php');
     require_once('../controllers/SampleDetailsController.php');
-    require_once('components/table.php');
+    require_once('components/datatable.php');
 
     $sample = new SampleDetailsController();
 

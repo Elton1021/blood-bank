@@ -18,8 +18,8 @@ class SampleDetailsController extends MysqliUtil{
         MysqliUtil::__destruct();
     }
 
-    public function validateHospital(){
-        if(!isset($this->auth->user()['id']) && isset($this->auth->user()['id']) && isset($this->auth->user()['userType']) && $this->auth->user()['userType'] == 'receiver'){
+    public function validateUserType($userType = 'hospital'){
+        if(!isset($this->auth->user()['id']) || isset($this->auth->user()['id']) && isset($this->auth->user()['userType']) && $this->auth->user()['userType'] != $userType){
             (new Route('home'))->redirect();
         }
     }
@@ -27,15 +27,57 @@ class SampleDetailsController extends MysqliUtil{
     public function index(){
         $columns = [];
         $sql = '';
-        if(isset($this->auth->user()['id']) && isset($this->auth->user()['userType']) == 'hospital'){
-            $sql = "SELECT hd.name AS hospital, sd.blood_group FROM sample_details sd INNER JOIN hospital_details hd WHERE sd.status = 'A'";
+        if(isset($this->auth->user()['id']) && isset($this->auth->user()['userType']) && $this->auth->user()['userType'] == 'hospital'){
+            $sql = "SELECT
+                    hd.name AS hospital,
+                    sd.blood_group
+                FROM
+                    sample_details sd
+                INNER JOIN
+                    hospital_details hd
+                ON
+                    hd.id = sd.hospital_id
+                WHERE
+                    sd.status = 'A'
+                ORDER BY sd.updated_on DESC";
             $columns = ['hospital','blood_group'];
-        }else if(isset($this->auth->user()['id']) && isset($this->auth->user()['userType']) == 'receiver'){
-            //fix it later
-            $sql = "SELECT hd.name AS hospital, sd.blood_group FROM sample_details sd INNER JOIN hospital_details hd WHERE sd.status = 'A'";
-            $columns = ['hospital','blood_group'];
+        }else if(isset($this->auth->user()['id']) && isset($this->auth->user()['userType']) && $this->auth->user()['userType'] == 'receiver'){
+            $sql = "SELECT 
+                (CASE
+                    WHEN sd.blood_group != '".$this->auth->user()['blood_group']."' THEN '<button class=\"btn btn-primary\" disabled>Request</button>'
+                    WHEN sr.id IS NOT NULL THEN '<button class=\"btn btn-secondary\" disabled>Requested</button>'
+                    ELSE CONCAT('<button class=\"btn btn-primary\" onclick=\"requestBlood(event)\" sample-id=\"',sd.id,'\">Request</button>')
+                END) AS activity,
+                hd.name AS hospital,
+                sd.blood_group
+            FROM
+                sample_details sd
+            INNER JOIN
+                hospital_details hd
+            ON
+                hd.id = sd.hospital_id
+            LEFT JOIN
+                sample_request sr
+            ON
+                sd.id = sr.sample_id AND sr.receiver_id = 8
+            WHERE
+                sd.status = 'A'
+            ORDER BY sd.updated_on DESC";
+            $columns = ['activity','hospital','blood_group'];
         }else{
-            $sql = "SELECT '<a class=\"btn btn-primary\" href=\"".(new Route('auth',['t' => 'receiver', 'f' => 'login']))->get()."\">Request</a>' AS activity, hd.name AS hospital, sd.blood_group FROM sample_details sd INNER JOIN hospital_details hd WHERE sd.status = 'A'";
+            $sql = "SELECT
+                    '<a class=\"btn btn-primary\" href=\"".(new Route('auth',['t' => 'receiver', 'f' => 'login']))->get()."\">Request</a>' AS activity,
+                    hd.name AS hospital,
+                    sd.blood_group
+                FROM
+                    sample_details sd
+                INNER JOIN
+                    hospital_details hd
+                ON
+                    hd.id = sd.hospital_id
+                WHERE
+                    sd.status = 'A'
+                ORDER BY sd.updated_on DESC";
             $columns = ['activity','hospital','blood_group'];
         }
         return $this->getDatatableData($columns, $sql);
@@ -50,8 +92,28 @@ class SampleDetailsController extends MysqliUtil{
         return [$columns,[]];
     }
 
+    public function requestBlood(){
+        $this->validateUserType('receiver');
+        try{
+            $data = $this->getData(['where' => [
+                ['id' => $_POST['sampleId']],
+            ]]);
+            if(sizeof($data) > 0 && isset($data[0]['blood_group']) && $data[0]['blood_group'] == $this->auth->user()['blood_group']){
+                $res = $this->insert([
+                    'sample_id' => $_POST['sampleId'],
+                    'receiver_id' => $this->auth->user()['id'],
+                ], 'sample_request');
+                if($res)
+                    return json_encode(['status' => 200, 'data' => true ]);
+            }
+        } catch(Throwable | Error | Exception $e) {
+            $this->log->error($e);
+        }
+        return json_encode(['status' => 500, 'data' => false ]);
+    }
+
     public function getByHospital(){
-        $this->validateHospital();
+        $this->validateUserType();
         try{
             $res = $this->getData(['where' => [
                 ['hospital_id' => $this->auth->user()['id']]
@@ -68,7 +130,7 @@ class SampleDetailsController extends MysqliUtil{
     }
 
     public function getRequests(){
-        $this->validateHospital();
+        $this->validateUserType();
         $sql = 'SELECT
                 rd.name AS receiver_name,
                 sd.blood_group
@@ -88,13 +150,13 @@ class SampleDetailsController extends MysqliUtil{
                 rd.id = sr.receiver_id
             WHERE
                 hd.id = '.$this->auth->user()['id'].'
-            ORDER BY added_on DESC';
+            ORDER BY sr.added_on DESC';
         $columns = ['receiver_name','blood_group'];
         return $this->getDatatableData($columns, $sql);
     }
 
     public function store(){
-        $this->validateHospital();
+        $this->validateUserType();
         try{
             if(isset($_POST['blood_group']) && isset($_POST['status'])){
                 $data = $this->getData([ 'fields' => ['id'] ,'where' => [

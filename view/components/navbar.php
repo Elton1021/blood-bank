@@ -17,7 +17,7 @@
           <a class="nav-link <?php echo $addSamplesNav ?? ''?>" href="<?php echo (new Route('addSamples'))->get()?>">Add Blood Samples</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">View Requests</a>
+          <a class="nav-link" href="<?php echo (new Route('viewRequest'))->get()?>">View Requests</a>
         </li>
         <?php
       }

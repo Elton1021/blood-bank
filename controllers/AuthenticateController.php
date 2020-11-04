@@ -142,7 +142,7 @@ class AuthenticateController extends MysqliUtil{
             'userType' => $this->userType
         ];
         if($this->userType == 'receiver'){
-            $data []= $this->blood_group;
+            $data['blood_group'] = $this->blood_group;
         }
         return $data;
     }

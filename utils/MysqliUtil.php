@@ -19,14 +19,14 @@ class MysqliUtil {
         return str_replace('"','\"',str_replace('\'','\\\'',$value));
     }
 
-    public function insert($data){
+    public function insert($data,$tableName = null){
         $columnNames = [];
         $values = [];
         foreach($data as $column => $value){
             $columnNames []= $column;
             $values []= $this->escapeQuotes($value);
         }
-        $sql = 'INSERT INTO '.$this->tableName.' ('.implode(',',$columnNames).') values ("'.implode('","',$values).'")';
+        $sql = 'INSERT INTO '.($tableName ?? $this->tableName).' ('.implode(',',$columnNames).') values ("'.implode('","',$values).'")';
         $result = $this->connection->query($sql);
         if($result){
             return $this->connection->insert_id;

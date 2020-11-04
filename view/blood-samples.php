@@ -2,7 +2,7 @@
     $bloodSamplesNav = 'active';
     require_once('components/headwrapper.php');
     require_once('../controllers/SampleDetailsController.php');
-    require_once('components/table.php');
+    require_once('components/datatable.php');
 
     $sample = new SampleDetailsController();
 
@@ -23,6 +23,37 @@
         </div>
     </div>
 </div>
+
+<script>
+    function requestBlood(e){
+        $(e.target).prop('disabled',true);
+        $(e.target).text('Processing...');
+        $.ajax({
+            url: '<?php echo (new Route('requestBlood'))->get()?>',
+            type:'POST',
+            data: {
+                sampleId: $(e.target).attr('sample-id')
+            },
+            success: (res) => {
+                try{
+                    res = JSON.parse(res);
+                    if(res.status == 200 && res.data){
+                        $(e.target).text('Requested');
+                        $(e.target).removeClass('btn-primary');
+                        $(e.target).addClass('btn-secondary');
+                    } else {
+                        $(e.target).text('Request');
+                        $(e.target).prop('disabled',false);
+                    }
+                } catch {
+                    $(e.target).text('Request');
+                    $(e.target).prop('disabled',false);
+                }
+            },
+        })
+    }
+</script>
+
 <?php
     require_once('components/footwrapper.php');
 ?>
