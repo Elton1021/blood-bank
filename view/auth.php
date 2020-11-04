@@ -10,7 +10,7 @@
             'title' => 'Hosiptal Name',
             'id' => 'name',
             'col-md' => '6',
-            'hint' => 'Special characters not allowed'
+            'hint' => 'Special characters and numbers not allowed'
         ],[
             'title' => 'Username',
             'id' => 'username',
@@ -145,42 +145,61 @@
     </div>
 </div>
 
-<?php 
-    if($formType == 'register'){
+<script src="../resources/js/validator.js"></script>
+<script>
+    <?php 
+        if($formType == 'register'){
     ?>
-        <script src="../resources/js/validator.js"></script>
-        <script>
-            setRules({
-                name: {
-                    regex: /[^A-Za-z0-9\ ]/,
-                },
-                username: {
-                    regex: /[^A-Za-z0-9]/,
-                    ajax: {
-                        url:"<?php echo (new Route($formType))->get();?>",
-                        type:"POST",
-                        headers: {'X-Requested-With': 'XMLHttpRequest'},
-                        data: {
-                            userExists: true
-                        },
-                        success: (response) => JSON.parse(response).status == 200 && JSON.parse(response).data,
-                        dataName: 'username'
-                    }
-                },
-                password: {
-                    regex: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/,
-                    matchRegex: false,
-                    minLength: 8
-                },
-                confirm_password: {
-                    matchIdValue: 'password',
-                    minLength: 8
-                },
-            })
-        </script>
+        setRules({
+            name: {
+                regex: /[^A-Za-z\ ]/,
+                maxLength: 50,
+            },
+            username: {
+                regex: /[^A-Za-z0-9]/,
+                maxLength: 50,
+                ajax: {
+                    url:"<?php echo (new Route($formType))->get();?>",
+                    type:"POST",
+                    headers: {'X-Requested-With': 'XMLHttpRequest'},
+                    data: {
+                        userExists: true
+                    },
+                    success: (response) => JSON.parse(response).status == 200 && JSON.parse(response).data,
+                    dataName: 'username'
+                }
+            },
+            password: {
+                regex: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/,
+                maxLength: 16,
+                matchRegex: false,
+                minLength: 8
+            },
+            confirm_password: {
+                matchIdValue: 'password',
+                maxLength: 50,
+                minLength: 8
+            },
+        })
+    <?php
+    } else {
+    ?>
+        setRules({
+            username: {
+                regex: /[^A-Za-z0-9]/,
+                maxLength: 50,
+            },
+            password: {
+                regex: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/,
+                maxLength: 16,
+                matchRegex: false,
+                minLength: 8
+            }
+        })
     <?php
     }
-?>
+    ?>
+</script>
 
 <?php
     require_once('components/footwrapper.php');

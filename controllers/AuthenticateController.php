@@ -116,7 +116,8 @@ class AuthenticateController extends MysqliUtil{
             if($this->userType === 'receiver'){
                 $data['blood_group'] = $_POST['blood_group'];
             }
-            if(!empty($data)){
+            $userExist = json_decode($this->userExists($data['username']));
+            if(!empty($data) && !$userExist->data){
                 $data['id'] = $this->insert($data);
                 if(!isset($data['id'])){
                     throw new Exception('user not registered');

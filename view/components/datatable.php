@@ -8,7 +8,7 @@
                     <tr>
             <?php
             $output = '';
-            $footer = '';
+            $footer = '<tfoot>';
             foreach($cols as $col){
                 $output .= '<th>'.ucwords(str_replace('_',' ',$col)).'</th>'; 
                 $footer .= '<td class="table-footer"><input class="form-control" id="'.$col.'" placeholder="'.ucwords(str_replace('_',' ',$col)).'"></td>';
@@ -25,7 +25,10 @@
             } else {
                 $output .= "<td colspan='".sizeof($cols)."' class='text-center'>No Data Found</td>";
             }
-            $output .= "</tbody><tfoot>$footer</tfoot></table>";
+            $footer .= '</tfoot>';
+            //work on footer search if possible
+            $footer = '';
+            $output .= "</tbody>$footer</table>";
             echo $output;
         }
         echo '';

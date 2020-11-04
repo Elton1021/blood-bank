@@ -3,6 +3,7 @@ function setRules(rules){
     //variables to log error and keep count
     const INPUT_ERROR_LOG = {}
     let errCount = 0
+    let ajaxValidationCount = 0
 
     //mark invalid inputs and logs the error on client side
     function markInvalid (id){
@@ -38,6 +39,7 @@ function setRules(rules){
         if(typeof(rules[id]) !== "undefined" && (
             typeof(rules[id].regex) !== "undefined" && rules[id].regex.test(value) && ( typeof(rules[id].matchRegex) === "undefined" ||  typeof(rules[id].matchRegex) !== "undefined" && rules[id].matchRegex) ||
             typeof(rules[id].regex) !== "undefined" && !rules[id].regex.test(value) && typeof(rules[id].matchRegex) !== "undefined" && !rules[id].matchRegex ||
+            typeof(rules[id].maxLength) !== "undefined" && rules[id].maxLength < value.length ||
             typeof(rules[id].minLength) !== "undefined" && rules[id].minLength > value.length ||
             typeof(rules[id].matchIdValue) !== "undefined" && $('#'+rules[id].matchIdValue).val() !== value ||
             $('#'+id).prop('required') && value.length === 0
@@ -51,8 +53,8 @@ function setRules(rules){
     //loops through rules creating event listeners for each rules using jQuery
     Object.keys(rules).forEach(id => {
         $('#'+id).on('keyup',e => validation(id))
-        $('#'+id).on('blur',e => {
-            if(typeof(rules[id].ajax) !== "undefined"){
+        if(typeof(rules[id].ajax) !== "undefined"){
+            $('#'+id).on('blur',e => {
                 data = typeof(rules[id].ajax.data) != "undefined" ? {...rules[id].ajax.data} : {}
                 data[rules[id].ajax.dataName] = $('#'+id).val().trim();
                 $.ajax({
@@ -66,8 +68,8 @@ function setRules(rules){
                         }
                     }
                 })
-            }               
-        })
+            })
+        }               
     })
 
     //form validation on submit (precaution)
