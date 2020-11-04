@@ -4,7 +4,6 @@
     require_once('../controllers/SampleDetailsController.php');
 
     $sample = new SampleDetailsController();
-    $sample->validateHospital();
 
     $data = $sample->getByHospital();
     $bloodGroupSwitches = [
@@ -62,7 +61,7 @@
                         <label for="<?php echo $bloodGroupId?>" class="custom-control-label"><?php echo $bloodGroup?></label>
                     </div>
                 </div>
-            <?php
+                <?php
                     if($itter == sizeof($bloodGroupSwitches)){
                         ?>
                             </div>

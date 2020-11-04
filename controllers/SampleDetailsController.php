@@ -38,7 +38,10 @@ class SampleDetailsController extends MysqliUtil{
             $sql = "SELECT '<a class=\"btn btn-primary\" href=\"".(new Route('auth',['t' => 'receiver', 'f' => 'login']))->get()."\">Request</a>' AS activity, hd.name AS hospital, sd.blood_group FROM sample_details sd INNER JOIN hospital_details hd WHERE sd.status = 'A'";
             $columns = ['activity','hospital','blood_group'];
         }
+        return $this->getDatatableData($columns, $sql);
+    }
 
+    public function getDatatableData($columns, $sql){
         try{
             return [$columns,$this->getByQuery($sql)];
         } catch(Throwable | Error | Exception $e) {
@@ -62,6 +65,32 @@ class SampleDetailsController extends MysqliUtil{
             $this->log->error($e);
         }
         return [];
+    }
+
+    public function getRequests(){
+        $this->validateHospital();
+        $sql = 'SELECT
+                rd.name AS receiver_name,
+                sd.blood_group
+            FROM
+                sample_request sr
+            INNER JOIN
+                sample_details sd
+            ON
+                sr.sample_id = sd.id
+            INNER JOIN
+                hospital_details hd
+            ON
+                hd.id = sd.hospital_id
+            INNER JOIN
+                receiver_details rd
+            ON
+                rd.id = sr.receiver_id
+            WHERE
+                hd.id = '.$this->auth->user()['id'].'
+            ORDER BY added_on DESC';
+        $columns = ['receiver_name','blood_group'];
+        return $this->getDatatableData($columns, $sql);
     }
 
     public function store(){
