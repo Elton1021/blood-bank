@@ -1,7 +1,7 @@
 <?php
 
 class Route {
-    private $mainRoute = '/blood-bank-server';
+    private $mainRoute = '';
 
     //routes to keep errors to minimum
     private $routes = [
