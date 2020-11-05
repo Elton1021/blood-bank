@@ -19,7 +19,7 @@
             </span>
         </div>
         <div class="card-body">
-        <?php echo datatable($data[0],$data[1])?>
+        <?php echo datatable($data)?>
         </div>
     </div>
 </div>
