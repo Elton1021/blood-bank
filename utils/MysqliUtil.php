@@ -7,7 +7,7 @@ class MysqliUtil {
 
     public function __construct(){
         error_reporting(E_ERROR | E_PARSE);
-        $this->connection = new mysqli("sql12.freemysqlhosting.net","sql12374463","wSmgcZWsM3","sql12374463");
+        $this->connection = new mysqli("localhost","root","","blood_bank");
         $this->connectionError = $this->connection->connect_errno;
     }
 
