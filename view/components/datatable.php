@@ -57,6 +57,7 @@
                                 } else if($page > 2 && $page-2 < $totalPages){
                                     $paginationStart = $page - 2;
                                 }
+                                $paginationStart = $paginationStart < 1 ? 1 : $paginationStart;
                                 for ($i = $paginationStart; $i <= $totalPages && $i < $paginationStart + 5; $i++){
                                     ?>
                                     <li class="page-item <?php echo $i == $page ? 'active' : '';?>"><a class="page-link" style="<?php echo $paginationStyle;?>" <?php echo ($i != $page ? 'href="'.$url.'?p='.$i.'"' : '');?>><?php echo $i;?></a></li>
