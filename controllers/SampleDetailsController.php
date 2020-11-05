@@ -85,11 +85,31 @@ class SampleDetailsController extends MysqliUtil{
 
     public function getDatatableData($columns, $sql){
         try{
-            return [$columns,$this->getByQuery($sql)];
+            $page = 1;
+            if(isset($_GET['p']) && is_numeric($_GET['p'])){
+                $page = $_GET['p'];
+            }
+            $count = $this->getByQuery("SELECT count(*) AS aggregate_count FROM (".$sql.") as temp")[0]['aggregate_count'];
+            $totalPages = (ceil($count) / 10) + 1;
+            //incase of url query param manipulation
+            $page = $totalPages < $page ? $totalPages : $page;
+            return [
+                'columns' => $columns,
+                'data' => $count == 0 ? [] : $this->getByQuery($sql.' LIMIT 10 OFFSET '.(($page - 1) * 10)),
+                'count' => $count,
+                'page' => $page,
+                'totalPages' => $totalPages
+            ];
         } catch(Throwable | Error | Exception $e) {
             $this->log->error($e);
         }
-        return [$columns,[]];
+        return [
+            'columns' => $columns,
+            'data' => [],
+            'count' => 0,
+            'page' => 1,
+            'totalPages' => 1
+        ];
     }
 
     public function requestBlood(){
