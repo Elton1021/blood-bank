@@ -90,7 +90,7 @@ class SampleDetailsController extends MysqliUtil{
                 $page = $_GET['p'];
             }
             $count = $this->getByQuery("SELECT count(*) AS aggregate_count FROM (".$sql.") as temp")[0]['aggregate_count'];
-            $totalPages = (ceil($count) / 10) + 1;
+            $totalPages = ceil($count / 10);
             //incase of url query param manipulation
             $page = $totalPages < $page ? $totalPages : $page;
             return [
