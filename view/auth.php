@@ -158,6 +158,7 @@
             username: {
                 regex: /[^A-Za-z0-9]/,
                 maxLength: 50,
+                ajaxMessage: 'Username already exists',
                 ajax: {
                     url:"<?php echo (new Route($formType))->get();?>",
                     type:"POST",

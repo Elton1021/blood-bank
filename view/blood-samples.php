@@ -37,7 +37,10 @@
             success: (res) => {
                 try{
                     res = JSON.parse(res);
-                    if(res.status == 200 && res.data){
+                    console.log(res);
+                    if(res.status == 401){
+                        window.location.href = '<?php echo (new Route('auth',['t' => 'receiver', 'f' => 'login']))->get();?>'
+                    } else if(res.status == 200 && res.data){
                         $(e.target).text('Requested');
                         $(e.target).removeClass('btn-primary');
                         $(e.target).addClass('btn-secondary');
@@ -45,7 +48,8 @@
                         $(e.target).text('Request');
                         $(e.target).prop('disabled',false);
                     }
-                } catch {
+                } catch (err) {
+                    console.log(err);
                     $(e.target).text('Request');
                     $(e.target).prop('disabled',false);
                 }

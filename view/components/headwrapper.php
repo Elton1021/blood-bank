@@ -41,3 +41,5 @@
         }
         require_once('components/navbar.php');
     ?>
+    <div id="toast-container" style="min-height:100px;position:fixed;top:0;left:0;z-index:9999;width:100%;margin-top:50px;">
+    </div>
