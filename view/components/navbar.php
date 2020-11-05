@@ -6,7 +6,7 @@
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
+  <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
     <ul class="navbar-nav">
       <li class="nav-item">
         <a class="nav-link <?php echo $bloodSamplesNav ?? ''?>" href="<?php echo (new Route('bloodSamples'))->get()?>">Samples</a>
@@ -34,7 +34,7 @@
                 <?php echo $auth->user()['name'];?>
               </span>
             </a>
-            <div class="dropdown-menu bg-dark text-secondary" aria-labelledby="profileDropdown">
+            <div class="dropdown-menu bg-dark text-secondary" style="z-index:10000" aria-labelledby="profileDropdown">
               <?php echo $auth->user()['userType'] == 'receiver' ? '<a class="dropdown-item text-white">Blood Group: '.$auth->user()['blood_group'].'</a><div class="dropdown-divider"></div>' : '';?>
               <a class="dropdown-item <?php echo $auth->user()['userType'] == 'receiver' ? 'text-warning' : 'text-primary'?>" href="<?php echo (new Route('logout'))->get()?>">Logout</a>
             </div>

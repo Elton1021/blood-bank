@@ -18,9 +18,6 @@
     ]
 ?>
 
-<div aria-live="polite" id="toast-container" aria-atomic="true" class="d-flex justify-content-center align-items-center" style="min-height:100px;position:fixed;top:0;left:0;z-index:9999;width:100%;margin-top:50px;">
-</div>
-
 <div class="container mt-5 mb-5 contentHeight">
     <div class="card bg-dark text-light shadow">
         <div class="card-header">
@@ -80,19 +77,6 @@
 
 <script>
     $('input').on('change',(e) => {
-
-        const id = 'unique_id' || Date.now();
-        const delay = 1500
-        $(`<div class="toast fade show" role="alert" id="${id}" aria-live="assertive" aria-atomic="true" data-delay="${delay}">
-            <div class="toast-body">
-                ${$(e.target).val() + ($(e.target).is(':checked') ? ' sample added' : ' sample removed')}
-            </div>
-        </div>`).appendTo('#toast-container');
-
-        setTimeout((id) => {
-            $('#toast-container').children('#'+id).removeClass('show').addClass('hide');
-        }, delay,id);
-
         $.ajax({
             url: '<?php echo (new Route('storeSample'))->get();?>',
             type: 'POST',
@@ -100,7 +84,25 @@
                 blood_group: $(e.target).val(),
                 status: $(e.target).is(':checked') ? 'A' : 'I'
             },
-            success: console.log
+            success: (res) => {
+                try{
+                    res = JSON.parse(res);
+                    // will give a toast everytime db is updated
+                    if(res.status == 200 && res.data){
+                        const id = Math.floor(Math.random() * 10) +'_'+ Date.now();
+                        const delay = 1500
+                        $(`<div class="toast fade show mx-auto" role="alert" id="${id}" aria-live="assertive" aria-atomic="true" data-delay="${delay}" >
+                            <div class="toast-body">
+                                ${$(e.target).val() + ($(e.target).is(':checked') ? ' sample added' : ' sample removed')}
+                            </div>
+                        </div>`).appendTo('#toast-container');
+
+                        setTimeout((id) => {
+                            $('#toast-container').children('#'+id).removeClass('show').addClass('hide');
+                        }, delay,id);
+                    }
+                } catch {}
+            }
         })
     })
 </script>

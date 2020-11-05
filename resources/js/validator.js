@@ -52,6 +52,7 @@ function setRules(rules){
     //loops through rules creating event listeners for each rules using jQuery
     Object.keys(rules).forEach(id => {
         $('#'+id).on('keyup',e => validation(id))
+        //if ajax validation is set
         if(typeof(rules[id].ajax) !== "undefined"){
             $('#'+id).on('blur',e => {
                 data = typeof(rules[id].ajax.data) != "undefined" ? {...rules[id].ajax.data} : {}
@@ -62,6 +63,19 @@ function setRules(rules){
                     success: (res) => {
                         if(rules[id].ajax.success(res)){
                             markInvalid(id)
+                            if(typeof(rules[id].ajaxMessage) != "undefined") {
+                                const toastId = Math.floor(Math.random() * 10) +'_'+ Date.now();
+                                const delay = 1500
+                                $(`<div class="toast fade show mx-auto" role="alert" id="${toastId}" aria-live="assertive" aria-atomic="true" data-delay="${delay}" >
+                                    <div class="toast-body">
+                                        ${rules[id].ajaxMessage}
+                                    </div>
+                                </div>`).appendTo('#toast-container');
+        
+                                setTimeout((toastId) => {
+                                    $('#toast-container').children('#'+toastId).removeClass('show').addClass('hide');
+                                }, delay,toastId);
+                            }
                         } else {
                             markValid(id)
                         }

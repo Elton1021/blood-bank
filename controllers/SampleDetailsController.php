@@ -113,7 +113,9 @@ class SampleDetailsController extends MysqliUtil{
     }
 
     public function requestBlood(){
-        $this->validateUserType('receiver');
+        if(!isset($this->auth->user()['id']) || isset($this->auth->user()['id']) && isset($this->auth->user()['userType']) && $this->auth->user()['userType'] != 'receiver'){
+            return json_encode(['status' => 401, 'data' => false ]);
+        }
         try{
             $data = $this->getData(['where' => [
                 ['id' => $_POST['sampleId']],
@@ -122,7 +124,7 @@ class SampleDetailsController extends MysqliUtil{
                 $res = $this->insert([
                     'sample_id' => $_POST['sampleId'],
                     'receiver_id' => $this->auth->user()['id'],
-                    'availabilitiy_status_on_request' => $data[0]['status'],
+                    'availability_status_on_request' => $data[0]['status'],
                 ], 'sample_request');
                 if($res)
                     return json_encode(['status' => 200, 'data' => true ]);
