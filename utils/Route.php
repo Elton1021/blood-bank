@@ -5,8 +5,8 @@ class Route {
     //mainRoute is to be empty string '' if the main root dierctory is htdocs itself
     //if not then add the path from htdocs to index.php
     //e.g. my code is in ./htdocs/blood-bank so the string is '/blood-bank'
-    // private $mainRoute = '';
-    private $mainRoute = '/blood-bank';
+    // private $mainRoute = '/blood-bank';
+    private $mainRoute = '';
 
     //routes to keep errors to minimum
     private $routes = [
