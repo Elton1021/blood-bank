@@ -2,10 +2,11 @@
 
 class Route {
     //Route is very important to get url strings or to redirect
-    //mainRoute is be empty if the main dierctory is htdocs itself
+    //mainRoute is to be empty string '' if the main root dierctory is htdocs itself
     //if not then add the path from htdocs to index.php
-    //e.g. my code is in ./htdocs/blood-bank-server so the string is '/blood-bank-server'
-    private $mainRoute = '/blood-bank-server';
+    //e.g. my code is in ./htdocs/blood-bank so the string is '/blood-bank'
+    // private $mainRoute = '';
+    private $mainRoute = '/blood-bank';
 
     //routes to keep errors to minimum
     private $routes = [
