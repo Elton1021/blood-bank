@@ -19,7 +19,7 @@
             </span>
         </div>
         <div class="card-body">
-        <?php echo datatable($data)?>
+        <?php echo datatable($data,'table-responsive-sm')?>
         </div>
     </div>
 </div>

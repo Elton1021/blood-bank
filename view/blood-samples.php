@@ -19,7 +19,7 @@
             </span>
         </div>
         <div class="card-body">
-        <?php echo datatable($data)?>
+        <?php echo datatable($data,$auth->user()['userType'] == 'receiver' ? 'table-responsive-sm' : null)?>
         </div>
     </div>
 </div>
