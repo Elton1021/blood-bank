@@ -1,4 +1,4 @@
-        <footer class="footer bg-dark">
+        <footer class="footer bg-dark" style="z-index:99999;">
             <div class="container">
                 <span class="text-muted">Designed & Developed By <span class="text-white">Elton Andrew</span>.</span>
             </div>

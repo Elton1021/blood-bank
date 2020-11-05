@@ -122,6 +122,7 @@ class SampleDetailsController extends MysqliUtil{
                 $res = $this->insert([
                     'sample_id' => $_POST['sampleId'],
                     'receiver_id' => $this->auth->user()['id'],
+                    'availabilitiy_status_on_request' => $data[0]['status'],
                 ], 'sample_request');
                 if($res)
                     return json_encode(['status' => 200, 'data' => true ]);
@@ -153,7 +154,9 @@ class SampleDetailsController extends MysqliUtil{
         $this->validateUserType();
         $sql = 'SELECT
                 rd.name AS receiver_name,
-                sd.blood_group
+                sd.blood_group,
+                CASE WHEN sd.status = "A" THEN "Available" ELSE "Not Available" END AS current_status,
+                CASE WHEN sr.availability_status_on_request = "A" THEN "Available" ELSE "Not Available" END AS status_on_request
             FROM
                 sample_request sr
             INNER JOIN
@@ -171,7 +174,7 @@ class SampleDetailsController extends MysqliUtil{
             WHERE
                 hd.id = '.$this->auth->user()['id'].'
             ORDER BY sr.added_on DESC';
-        $columns = ['receiver_name','blood_group'];
+        $columns = ['receiver_name','blood_group','current_status','status_on_request'];
         return $this->getDatatableData($columns, $sql);
     }
 

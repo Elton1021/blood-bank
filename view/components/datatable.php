@@ -1,6 +1,6 @@
 <?php
 
-    function datatable($datatableData){
+    function datatable($datatableData,$tableCSS = 'table-sm-responsive'){
         $cols = $datatableData['columns'] ?? [];
         $data = $datatableData['data'] ?? [];
         $count = $datatableData['count'] ?? 0;
@@ -8,7 +8,7 @@
         $totalPages = $datatableData['totalPages'] ?? 1;
         if(sizeof($cols) > 0){
             ?>
-            <table class="table table-sm-responsive table-striped table-dark">
+            <table class="table <?php echo $tableCSS;?> table-striped table-dark">
                 <thead>
                     <tr>
             <?php
