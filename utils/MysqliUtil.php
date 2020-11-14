@@ -7,7 +7,7 @@ class MysqliUtil {
 
     public function __construct(){
         error_reporting(E_ERROR | E_PARSE);
-        $this->connection = new mysqli("sql12.freemysqlhosting.net","sql12374463","wSmgcZWsM3","sql12374463");
+        $this->connection = new mysqli("sql12.freemysqlhosting.net","sql12376464","6qIe6WAKrm","sql12376464");
         $this->connectionError = $this->connection->connect_errno;
     }
 
